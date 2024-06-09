@@ -13,7 +13,6 @@ ul, li {
 /* Header - Information about logged-in user */
 .biographical-display {
     height: 25%;
-    border: solid 2px #000;
     border-radius: 20px;
     background: #f9fbfb;
     display: flex;
@@ -58,7 +57,7 @@ ul, li {
 
 /* Subspecialty data display */
 .data-display {
-    border: solid 2px;
+    border: solid 2px #e3e3e3;
     border-radius: 20px;
     flex-grow: 1;
     padding-left: 1rem;
@@ -74,7 +73,6 @@ ul, li {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /* border: solid 2px; */
 }
 
 .subsection-display-header {
