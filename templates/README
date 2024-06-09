@@ -1,0 +1,5 @@
+Why is this folder filled with symlinks?
+Rocket serves templates from only one directory, configurable via the `template_dir` configuration variable.
+For this project, I preferred to organize the static assets into folders separated by page.
+Hopefully, a future refactor will let me configure everything about each page into its own folder, but I still need to learn more about how Rust crate and module stuff works.
+To reconcile the two, this directory just contains symlinks to all the disparate html pages.
