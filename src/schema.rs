@@ -3,18 +3,18 @@
 diesel::table! {
     cases (id) {
         id -> Int4,
-        read_at -> Nullable<Timestamp>,
+        read_at -> Timestamp,
+        #[max_length = 10]
+        npi -> Varchar,
         #[max_length = 50]
-        npi -> Nullable<Varchar>,
+        exam_name -> Varchar,
         #[max_length = 50]
-        exam_name -> Nullable<Varchar>,
+        modality -> Varchar,
         #[max_length = 50]
-        modality -> Nullable<Varchar>,
+        subspecialty -> Varchar,
+        is_child -> Bool,
         #[max_length = 50]
-        subspecialty -> Nullable<Varchar>,
-        is_child -> Nullable<Bool>,
-        #[max_length = 50]
-        facility_name -> Nullable<Varchar>,
+        facility_name -> Varchar,
     }
 }
 
@@ -25,12 +25,14 @@ diesel::table! {
         password_hash -> Varchar,
         created_at -> Timestamp,
         #[max_length = 20]
-        firstname -> Nullable<Varchar>,
+        firstname -> Varchar,
         #[max_length = 20]
-        lastname -> Nullable<Varchar>,
+        lastname -> Varchar,
+        #[max_length = 10]
+        npi -> Varchar,
         #[max_length = 20]
-        degree -> Nullable<Varchar>,
-        training_year -> Nullable<Int4>,
+        degree -> Varchar,
+        training_year -> Int4,
     }
 }
 

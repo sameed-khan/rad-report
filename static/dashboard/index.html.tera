@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
   <!-- TODO: CHANGE REFERENCEES BELOW SO THEY WROK WITH ROCKET -->
-  <link rel="stylesheet" href="dash_styles.css">
+  <link rel="stylesheet" href="dashboard/dash_styles.css">
   <link rel="icon", href="static/favicon.png">
   <!-- get some niiice fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
@@ -19,7 +19,7 @@
       <!-- will have to adjust the below to display a default placeholder or get from user profile -->
       <!-- TODO: FIX THE BELOW PATH BEFORE RUNNING THIS -->
       <div id="container-a1" class="image-wrapper">
-        <img src="moondog.png" id="img-a" class="profile-picture">
+        <img src="dashboard/moondog.png" id="img-a" class="profile-picture">
       </div>
       <div id="container-a2" class="text-wrapper">
         <span id="text-a1" class="name-degree-text">{{ firstname }} {{lastname}} {{degree}} </span> 
@@ -40,26 +40,13 @@
             <span id="text-c2" class="total-cases-display-text">Total Cases:</span>
             <span id="text-c3" class="total-cases-display-number">{{ total_cases }}</span>
           </div>
+
           <ul id="list-b1" class="plot-categories-list">
-            <li id="list-element-b1" class="plot-categories-list-element">
-              <span class="plot-categories-list-category">Chest</span>
-              <span id="text-b4" class="plot-categories-list-element-quantity">{{ n }}</span>
-            <li id="list-element-b2" class="plot-categories-list-element">
-              <span class="plot-categories-list-category">Body</span>
-              <span id="text-b5" class="plot-categories-list-element-quantity">{{ n }}</span>
-            <li id="list-element-b3" class="plot-categories-list-element">
-              <span class="plot-categories-list-category">Neuro</span>
-              <span id="text-b6" class="plot-categories-list-element-quantity">{{ n }}</span>
-            <li id="list-element-b4" class="plot-categories-list-element">
-              <span class="plot-categories-list-category">Breast</span>
-              <span id="text-b7" class="plot-categories-list-element-quantity">{{ n }}</span>
-            <li id="list-element-b5" class="plot-categories-list-element">
-              <span class="plot-categories-list-category">Nuclear</span>
-              <span id="text-b8" class="plot-categories-list-element-quantity">{{ n }}</span>
-            <li id="list-element-b6" class="plot-categories-list-element">
-              <span class="plot-categories-list-category">MSK</span>
-              <span id="text-b9" class="plot-categories-list-element-quantity">{{ n }}</span>
-            </li>
+            {% for aggstruct in subspec_counts %}
+              <li id="list-element-b{{loop.index0+1}}" class="plot-categories-list-element">
+                <span class="plot-categories-list-category">{{ aggstruct.category }}</span>
+                <span id="text-b{{loop.index0+4}}" class="plot-categories-list-element-quantity">{{ aggstruct.count }}</span>
+            {% endfor %}
           </ul>
         </div>
       </div>
@@ -69,35 +56,20 @@
           <h2 id="h2-c" class="subsection-display-header">Experience by Modality</h2>
           <span id="text-c1" class="daterange-header">{{start_date}} - {{end_date}}</span>
         </div>
+
         <div id="container-c1" class="donut-plot modality-breakdown">Some content here</div>
         <div id="container-c2" class="plot-legend modality-legend">
           <div id="container-c4" class="total-cases-display-container">
             <span id="text-c2" class="total-cases-display-text">Total Cases:</span>
             <span id="text-c3" class="total-cases-display-number">{{ total_cases }}</span>
           </div>
+
           <ul id="list-c1" class="plot-categories-list">
-            <li id="list-element-c1" class="plot-categories-list-element">
-              <span class="plot-categories-list-category">MRI</span>
-              <span id="text-c4" class="plot-categories-list-element-quantity">{{ n }}</span>
-            <li id="list-element-c2" class="plot-categories-list-element">
-              <span class="plot-categories-list-category">Fluoro</span>
-              <span id="text-c5" class="plot-categories-list-element-quantity">{{ n }}</span>
-            <li id="list-element-c3" class="plot-categories-list-element">
-              <span class="plot-categories-list-category">Ultrasound</span>
-              <span id="text-c6" class="plot-categories-list-element-quantity">{{ n }}</span>
-            <li id="list-element-c4" class="plot-categories-list-element">
-              <span class="plot-categories-list-category">SPECT</span>
-              <span id="text-c7" class="plot-categories-list-element-quantity">{{ n }}</span>
-            <li id="list-element-c5" class="plot-categories-list-element">
-              <span class="plot-categories-list-category">XR</span>
-              <span id="text-c8" class="plot-categories-list-element-quantity">{{ n }}</span>
-            <li id="list-element-c6" class="plot-categories-list-element">
-              <span class="plot-categories-list-category">PET</span>
-              <span id="text-c9" class="plot-categories-list-element-quantity">{{ n }}</span>
-            <li id="list-element-c7" class="plot-categories-list-element">
-              <span class="plot-categories-list-category">CT</span>
-              <span id="text-c10" class="plot-categories-list-element-quantity">{{ n }}</span>
-            </li>
+            {% for aggstruct in modcounts %}
+              <li id="list-element-c{{loop.index0+1}}" class="plot-categories-list-element">
+                <span class="plot-categories-list-category">{{ aggstruct.category }}</span>
+                <span id="text-c{{loop.index0+4}}" class="plot-categories-list-element-quantity">{{ aggstruct.count }}</span>
+            {% endfor %}
           </ul>
         </div>
       </div>
