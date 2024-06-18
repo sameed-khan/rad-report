@@ -5,11 +5,11 @@ use rocket::outcome::IntoOutcome;
 use rocket::request::{self, FromRequest, Request};
 use rocket::response::Redirect;
 use rocket::http::Status;
+use rocket::serde::json::Json;
 use rocket_dyn_templates::{Template, context};
 use rad_report::models::*;
-use rad_report::schema::{cases, users};
 use diesel::prelude::*;
-use diesel::dsl::{count, min, max};
+use diesel::dsl::{count, min, max, sql_query};
 use rad_report::establish_connection;
 use serde::Serialize;
 use chrono::NaiveDateTime;
@@ -28,6 +28,27 @@ impl<'r> FromRequest<'r> for UserID {
             .map(UserID)
             .or_forward(Status::Unauthorized)
     }
+}
+
+fn capitalize_degrees(degree: &str) -> String {
+    let degrees: Vec<&str> = degree.split("_").collect();
+    let mut capitalized_degrees = Vec::new();
+
+    for degree in degrees {
+        let capitalized_degree = match degree.trim().to_lowercase().as_str() {
+            "md" => "MD".to_string(),
+            "do" => "DO".to_string(),
+            "mbbs" => "MBBS".to_string(),
+            "ms" => "MS".to_string(),
+            "phd"=> "PhD".to_string(),
+            "mba" => "MBA".to_string(),
+            "dphil" => "DPhil".to_string(),
+            _ => degree.to_uppercase() 
+        };
+        capitalized_degrees.push(capitalized_degree);
+    }
+
+    capitalized_degrees.join(", ")
 }
 
 fn capitalize_first_letter(name: &str) -> String {
@@ -101,7 +122,7 @@ fn index(user_id: UserID) -> Template {
     Template::render("dashboard", context! {
         firstname: capitalize_first_letter(&user.firstname),
         lastname: capitalize_first_letter(&user.lastname),
-        degree: user.degree.replace("_", " ").to_uppercase(),
+        degree: capitalize_degrees(&user.degree),
         training_year: user.training_year,
         start_date: stardate,
         end_date: endate,
@@ -111,6 +132,81 @@ fn index(user_id: UserID) -> Template {
     })
 }
 
+#[derive(QueryableByName, Debug)]
+struct DonutGraphQueryResult {
+    #[diesel(sql_type = diesel::sql_types::Text)]
+    category_out: String,
+    #[diesel(sql_type = diesel::sql_types::Float)]
+    pct: f32,
+}
+
+#[derive(Serialize)]
+struct DonutGraphData {
+     subspecialty: GraphDataResponse,
+     modality: GraphDataResponse
+}
+
+#[derive(Serialize)]
+struct GraphDataResponse {
+    data: Vec<f32>,
+    categories: Vec<String>
+}
+
+// This is not clean, but I'm practicing learning how to use the type system
+impl From<Vec<DonutGraphQueryResult>> for GraphDataResponse {
+    fn from(results: Vec<DonutGraphQueryResult>) -> Self {
+        let data = results.iter().map(|x| x.pct as f32).collect();
+        let categories = results.iter().map(|x| x.category_out.clone()).collect();
+        GraphDataResponse { data, categories }
+    }
+}
+
+#[get("/donuts")]
+fn get_donut_graph_data (user_id: UserID) -> Json<DonutGraphData> {
+    let conn = &mut establish_connection();
+    let query_id = user_id.0;
+    let user: User = rad_report::schema::users::dsl::users
+        .select(User::as_select())
+        .filter(rad_report::schema::users::dsl::id.eq(&query_id))
+        .get_result(conn)
+        .expect("Diesel error: user query unsuccessful");
+
+    const QUERY_STRING: &str =
+    r#" SELECT (((SUM(tbl1.cat_count) / tbl2.total) * 100)::real) AS pct, tbl1.{column} AS category_out
+        FROM users
+        INNER JOIN (
+            SELECT {column}, COUNT(id) AS cat_count, npi
+            FROM cases
+            GROUP BY {column}, npi
+        ) AS tbl1
+        ON tbl1.npi = users.npi INNER JOIN (
+            SELECT COUNT(id) AS total, npi
+            FROM cases
+            GROUP BY npi
+        ) AS tbl2
+        ON tbl2.npi = users.npi
+        WHERE users.npi = $1
+        GROUP BY users.npi, tbl1.{column}, tbl2.total"#;
+
+    let subspecialty_data: GraphDataResponse = sql_query(QUERY_STRING.replace("{column}", "subspecialty"))
+        .bind::<diesel::sql_types::Text, _>(&user.npi)
+        .load::<DonutGraphQueryResult>(conn)
+        .expect("Diesel error: subspecialty donut graph query unsuccessful")
+        .into();
+
+    let modality_data: GraphDataResponse = sql_query(QUERY_STRING.replace("{column}", "modality"))
+        .bind::<diesel::sql_types::Text, _>(&user.npi)
+        .load::<DonutGraphQueryResult>(conn)
+        .expect("Diesel error: modality donut graph query unsuccessful")
+        .into();
+
+    let donut_data_response = DonutGraphData {
+        subspecialty: subspecialty_data,
+        modality: modality_data
+    };
+
+    Json(donut_data_response)
+}
 
 #[get("/", rank = 2)]
 fn dashboard_redirect() -> Redirect {
@@ -123,5 +219,5 @@ async fn get_files(file: PathBuf) -> Option<NamedFile> {
 }
 
 pub fn routes() -> Vec<Route> {
-    routes![index, dashboard_redirect, get_files]
+    routes![index, dashboard_redirect, get_files, get_donut_graph_data]
 }

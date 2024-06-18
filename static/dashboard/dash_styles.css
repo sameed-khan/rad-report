@@ -1,3 +1,10 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+html {
+    font-size: 2vh;
+}
 ul, li {
     list-style-type: none;
     list-style-position: inside;
@@ -5,18 +12,24 @@ ul, li {
     padding: 0;
 }
 
-.main-header {
+.title-header {
     font-family: "Source Sans 3";
-    font-size: 2rem;
+    color: #ffffff;
+    background-color: #000000;
+    padding-left: 0.5rem;
+    margin: 0;
 }
 
 /* Header - Information about logged-in user */
 .biographical-display {
-    height: 25%;
+    height: 20%;
     border-radius: 20px;
     background: #f9fbfb;
     display: flex;
-    padding: 1rem 1rem 1rem 2rem
+    padding: 1rem 1rem 1rem 2rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+
 }
 
 .image-wrapper {
@@ -48,31 +61,46 @@ ul, li {
 
 /* Data Display - graphs and aggregate information */
 .flexbox-holder {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
     height: 60%;
-    display: flex;
+    max-height: 60%; /* this is to prevent Highcharts chart from extending container past height */
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    /* display: flex;
     margin-top: 0.7rem;
     flex-direction: row;
-    gap: 0.5rem;
+    gap: 0.5rem; */
 }
 
 /* Subspecialty data display */
 .data-display {
     border: solid 2px #e3e3e3;
     border-radius: 20px;
-    flex-grow: 1;
     padding-left: 1rem;
     padding-right: 1rem;
-    display: flex;
+    display: grid;
+    grid-template-rows: 15% 85%;
+    grid-template-columns: 50% 50%;
+    grid-template-areas: 
+        "header header"
+        "donut-plot plot-legend";
+    /* grid-template-rows: 15% 85%;
+    grid-template-columns: 1fr; */
+    /* display: flex;
+    flex-grow: 1;
     flex-flow: row wrap;
-    box-sizing: border-box;
+    box-sizing: border-box; */
 }
 
 .header-container {
-    height: 15%;
+    /* height: 15%; */
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    grid-area: header;
 }
 
 .subsection-display-header {
@@ -85,28 +113,30 @@ ul, li {
 .daterange-header{
     font-family: "Source Sans 3";
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 1.3rem;
     color: gray; /* TODO: FIX TO HEX CODE */
 }
 
 .donut-plot {
-    height: 85%;
-    /* border: solid 1px; */
-    /* background: red; */
-    flex: 1;
+    /* width: 100%; */
+    /* flex: 1; */
+    height: 100%;
+    max-height: 100%;
+    grid-area: donut-plot;
 }
+
 .plot-legend {
-    /* border: solid 1px; */
-    /* background: gray; */
-    flex: 1.5;
+    padding-left: 0.5em;
+    /* flex: 1.5; */
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
+    grid-area: plot-legend;
 }
 
 .total-cases-display-container {
     display: flex;
-    margin-top: 4rem;
+    margin-top: 1rem;
     align-items: center;
     width: 100%;
     box-sizing: border-box;
@@ -115,7 +145,7 @@ ul, li {
 .total-cases-display-text {
     font-family: "Source Sans 3";
     font-weight: 500;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     margin-right: 0.6em;
 }
 
@@ -151,7 +181,7 @@ ul, li {
     display: inline-block;
     width: 1em;
     height: 1em;
-    background-color: #ff0000;
+    background-color: var(--bullet-color, #ffffff);
     margin-right: 1em;
     vertical-align: middle;
     border-radius: 10%;
@@ -159,10 +189,10 @@ ul, li {
 .plot-categories-list-category {
     font-family: "Source Sans 3";
     font-weight: 500;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
 }
 .plot-categories-list-element-quantity {
     font-family: "Source Sans 3";
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
 }

@@ -10,11 +10,12 @@
   <!-- get some niiice fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
   <script defer src="dashboard/dashboard.js"></script>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
 </head>
 
 <body>
   <main id="main-holder">
-    <h1 id="title" class="main-header">Cases Overview</h1>
+    <h1 id="title" class="title-header">Cases Overview</h1>
     <div id="container-a" class="biographical-display">
       <!-- will have to adjust the below to display a default placeholder or get from user profile -->
       <!-- TODO: FIX THE BELOW PATH BEFORE RUNNING THIS -->
@@ -34,7 +35,7 @@
           <h2 id="h2-b" class="subsection-display-header">Experience by Subspecialty</h2>
           <span id="text-b1" class="daterange-header">{{start_date}} - {{end_date}}</span>
         </div>
-        <div id="container-b1" class="donut-plot subspecialty-breakdown">Some content here</div>
+        <div id="container-b1" class="donut-plot subspecialty-breakdown">&nbsp</div>
         <div id="container-b2" class="plot-legend subspecialty-legend">
           <div id="container-c4" class="total-cases-display-container">
             <span id="text-c2" class="total-cases-display-text">Total Cases:</span>
@@ -57,7 +58,7 @@
           <span id="text-c1" class="daterange-header">{{start_date}} - {{end_date}}</span>
         </div>
 
-        <div id="container-c1" class="donut-plot modality-breakdown">Some content here</div>
+        <div id="container-c1" class="donut-plot modality-breakdown">&nbsp</div>
         <div id="container-c2" class="plot-legend modality-legend">
           <div id="container-c4" class="total-cases-display-container">
             <span id="text-c2" class="total-cases-display-text">Total Cases:</span>
